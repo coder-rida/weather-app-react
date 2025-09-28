@@ -5,8 +5,6 @@ const forecastInfoDiv = document.getElementById('forecast-info');
 
 // Handle button click
 getLocationBtn.addEventListener('click', getCurrentLocation);
-
-// Get user location
 function getCurrentLocation() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(position => {
