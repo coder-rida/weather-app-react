@@ -1,14 +1,76 @@
 <!DOCTYPE html>
+<html lang="en">
 <head>
-    <title> Weather App</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather App</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Weather App</h1>
-    <button id="get-location-btn">Get Current Location</button>
-    <div id="weather"></div>
-    <div id="forecast-info"></div>
+  <div class="weather-app">
+    <div id="loading" class="loading">
+  <div class="spinner"></div>
+  <p>Loading weather data...</p>
+</div>
 
-    <script src="script.js"></script>
+    <!-- Left Panel -->
+    <div class="weather-left">
+      <div class="weather-main">
+        <div class="weather-icon" id="weather-icon">🌤️</div>
+        <h1 id="temperature">--°C</h1>
+        <p id="date-time">--</p>
+        <p id="condition">--</p>
+        <p id="rain-chance">Rain - 0%</p>
+        <div class="location" id="location">--</div>
+      </div>
+    </div>
+
+    <!-- Right Panel -->
+    <div class="weather-right">
+      <div class="forecast-section">
+        <h2>Forecast</h2>
+        <div id="forecast-info" class="forecast-container">
+        </div>
+      </div>
+      <div class="highlights-section">
+  <h2>Today's Highlights</h2>
+  <div class="highlights">
+    
+    <div class="highlight-box">
+      <h3>☀️ UV Index</h3>
+      <p id="uv">--</p>
+    </div>
+
+    <div class="highlight-box">
+      <h3>🌬 Wind Status</h3>
+      <p id="wind">-- km/h</p>
+    </div>
+
+    <div class="highlight-box">
+      <h3>🌅 Sunrise & Sunset</h3>
+      <p id="sunrise">--</p>
+      <p id="sunset">--</p>
+    </div>
+
+    <div class="highlight-box">
+      <h3>💧 Humidity</h3>
+      <p id="humidity">--%</p>
+    </div>
+
+    <div class="highlight-box">
+      <h3>👁 Visibility</h3>
+      <p id="visibility">-- km</p>
+    </div>
+
+    <div class="highlight-box">
+      <h3>🏭 Air Quality</h3>
+      <p id="air-quality">--</p>
+    </div>
+
+  </div>
+</div>
+    </div>  
+  </div>
+  <script src="script.js"></script>
 </body>
 </html>
