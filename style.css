@@ -1,4 +1,6 @@
-/* Reset */
+/* ==================================================== */
+/*                GLOBAL RESET & BASE STYLE             */
+/* ==================================================== */
 * {
   margin: 0;
   padding: 0;
@@ -15,38 +17,9 @@ body {
   color: #333;
 }
 
-/* Loader */
-.loading {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: #0d1117;
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  z-index: 9999;
-}
-
-.spinner {
-  border: 6px solid #f3f3f3;
-  border-top: 6px solid #00aaff;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  animation: spin 1s linear infinite;
-  margin-bottom: 15px;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* App Layout */
+/* ==================================================== */
+/*                MAIN WEATHER APP LAYOUT               */
+/* ==================================================== */
 .weather-app {
   display: flex;
   width: 95%;
@@ -58,7 +31,7 @@ body {
   box-shadow: 0 10px 30px rgba(0,0,0,0.15);
 }
 
-/* Left Panel */
+/* ---------------- LEFT PANEL ---------------- */
 .weather-left {
   flex: 1;
   max-width: 350px;
@@ -93,7 +66,7 @@ body {
   font-weight: 600;
 }
 
-/* Right Panel */
+/* ---------------- RIGHT PANEL ---------------- */
 .weather-right {
   flex: 2;
   padding: 30px;
@@ -110,7 +83,7 @@ body {
   color: #333;
 }
 
-/* Forecast Cards */
+/* ---------------- FORECAST CARDS ---------------- */
 .forecast-section {
   margin-bottom: 20px;
 }
@@ -144,7 +117,7 @@ body {
   color: #444;
 }
 
-/* Highlights */
+/* ---------------- HIGHLIGHTS ---------------- */
 .highlights-section {
   margin-top: 20px;
 }
@@ -176,11 +149,9 @@ body {
   color: #555;
 }
 
-/* ======================= */
-/* RESPONSIVE BREAKPOINTS  */
-/* ======================= */
-
-/* Tablets */
+/* ==================================================== */
+/*               RESPONSIVE BREAKPOINTS                 */
+/* ==================================================== */
 @media (max-width: 1024px) {
   .weather-app {
     flex-direction: column;
@@ -210,30 +181,121 @@ body {
   }
 }
 
-/* Mobile */
 @media (max-width: 768px) {
-  .weather-left {
-    padding: 20px;
-  }
-
+  .weather-left { padding: 20px; }
   .weather-left h1 { font-size: 35px; }
   .weather-left p, .location { font-size: 15px; }
   .weather-icon { font-size: 60px; }
-
   .forecast-container { justify-content: center; gap: 15px; }
+  .forecast-card { width: 80px; padding: 12px; }
+  .highlights { grid-template-columns: 1fr; }
+  .highlight-box { padding: 15px; }
+}
 
-  .forecast-card {
-    width: 80px;
-    padding: 12px;
-  }
+/* ==================================================== */
+/*            CLASSIC FORECAST DETAILS PAGE             */
+/* ==================================================== */
 
-  .highlights {
-    grid-template-columns: 1fr;
-  }
+.details-container {
+  width: 90%;
+  max-width: 1000px;
+  margin: 60px auto;
+  padding: 40px 35px;
+  border-radius: 25px;
+  background: linear-gradient(145deg, #ffffff, #f3f8ff);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.6s ease-in-out;
+}
 
-  .highlight-box {
-    padding: 15px;
-  }
+/* Header */
+.details-container h1 {
+  text-align: center;
+  color: black;
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 30px;
+  letter-spacing: 1px;
+}
+
+/* Grid for details */
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 25px;
+}
+
+/* Individual cards */
+.detail-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 25px 20px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  transition: all 0.3s ease;
+  border: 1px solid #e8eef5;
+}
+
+/* Icon styling */
+.detail-card i {
+  font-size: 38px;
+  color: #00aaff;
+  margin-bottom: 10px;
+}
+
+/* Text in cards */
+.detail-card h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 6px;
+}
+
+.detail-card p {
+  font-size: 16px;
+  color: #555;
+}
+.detail-card .fa-sun {
+  color: #ffb300;
 }
 
 
+/* Back button */
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 40px auto 10px;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #00aaff, #0078ff);
+  color: #fff;
+  border-radius: 50px;
+  font-weight: 600;
+  text-decoration: none;
+  letter-spacing: 0.5px;
+  font-size: 15px;
+  box-shadow: 0 6px 15px rgba(0, 120, 255, 0.25);
+  transition: all 0.3s ease;
+}
+
+.back-btn i {
+  margin-right: 8px;
+  font-size: 18px;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .details-container {
+    width: 95%;
+    padding: 25px;
+  }
+
+  .details-container h1 { font-size: 24px; }
+  .detail-card { padding: 20px; }
+  .back-btn { width: 100%; }
+}

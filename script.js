@@ -14,8 +14,6 @@ const humidityDiv = document.getElementById('humidity');
 const visibilityDiv = document.getElementById('visibility');
 const airQualityDiv = document.getElementById('air-quality');
 
-// Loading div
-const loadingDiv = document.getElementById("loading");
 const weatherIcons = {
     Clear: "☀️", 
     Clouds: "⛅",
@@ -26,7 +24,7 @@ const weatherIcons = {
     Mist: "🌫️"
 };
 
-// Default location 
+ 
 const defaultLat = 33.6952;
 const defaultLon = 73.0581;
 
@@ -41,7 +39,6 @@ function getCurrentLocation() {
         return;
     }
     locationDiv.innerHTML = "Detecting your location...";
-    // Request current position with a reasonable timeout
     navigator.geolocation.getCurrentPosition(
         position => {
             const lat = position.coords.latitude;
@@ -61,28 +58,19 @@ function getCurrentLocation() {
 
 // Fetch current weather
 function getWeatherData(lat, lon) {
-
-    loadingDiv.style.display = "flex";
-
     const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
     fetch(url)
         .then(response => response.json())
         .then(data => {
-            // Robust check: cod might be number or string
             if (!data || parseInt(data.cod) !== 200) {
-                // Hide loading and show error
-                loadingDiv.style.display = "none";
                 locationDiv.innerHTML = `<p style="color: red;">Error: ${data && data.message ? data.message : 'Unable to fetch weather'}</p>`;
                 return;
             }
             displayWeatherData(data);
             updateDateTime(data.timezone);
-            // Hide loading 
-            loadingDiv.style.display = "none";
         })
         .catch(error => {
             console.error('Error fetching weather data:', error);
-            loadingDiv.style.display = "none";
             locationDiv.innerHTML = `<p style="color: red;">Error fetching weather data</p>`;
         });
 }
@@ -94,24 +82,21 @@ function displayWeatherData(data) {
     conditionDiv.innerHTML = data.weather[0].description;
     weatherIconDiv.innerHTML = weatherIcons[condition] || "☀️";
     locationDiv.innerHTML = `${data.name}, ${data.sys.country}`;
-    // OpenWeather wind.speed is m/s — convert to km/h for display
     const windKmh = (data.wind && data.wind.speed) ? (data.wind.speed * 3.6).toFixed(1) : "--";
     windDiv.innerHTML = `${windKmh} km/h`;
     humidityDiv.innerHTML = `${data.main.humidity}%`;
     visibilityDiv.innerHTML = `${(data.visibility / 1000).toFixed(1)} km`;
     sunriseDiv.innerHTML = new Date(data.sys.sunrise * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     sunsetDiv.innerHTML = new Date(data.sys.sunset * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    uvDiv.innerHTML = "N/A"; // Needs One Call API
-    airQualityDiv.innerHTML = "N/A"; // Needs Air Pollution API
+    uvDiv.innerHTML = "N/A"; 
+    airQualityDiv.innerHTML = "N/A"; 
 }
 
 function updateDateTime(timezoneOffset) {
-    // Clear previous interval so multiple timers don't accumulate
     if (dateInterval) clearInterval(dateInterval);
 
     function refreshTime() {
         const now = new Date();
-        // Convert to UTC ms, then add location timezone offset (timezoneOffset is seconds)
         const utcMs = now.getTime() + (now.getTimezoneOffset() * 60000);
         const localMs = utcMs + timezoneOffset * 1000;
         const localDate = new Date(localMs);
@@ -123,46 +108,46 @@ function updateDateTime(timezoneOffset) {
 }
 
 function getForecastData(lat, lon) {
-    // Show loading
-    loadingDiv.style.display = "flex"; 
-
     const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
     fetch(url)
         .then(response => response.json())
         .then(data => {
             if (!data || parseInt(data.cod) !== 200) {
-                
-                loadingDiv.style.display = "none";
                 forecastInfoDiv.innerHTML = `<p style="color: red;">Error: ${data && data.message ? data.message : 'Unable to fetch forecast'}</p>`;
                 return;
             }
             displayForecastData(data);
-
-    
-            loadingDiv.style.display = "none"; 
         })
         .catch(error => {
             console.error('Error fetching forecast data:', error);
-            loadingDiv.style.display = "none";
             forecastInfoDiv.innerHTML = `<p style="color: red;">Error fetching forecast data</p>`;
         });
 }
 
 function displayForecastData(data) {
     let dayCount = 0;
-    let forecastHtml = `<div class="forecast-container">`;// forecast cards 
+    let forecastHtml = `<div class="forecast-container">`;
 
     data.list.forEach((forecast, index) => {
         if (index % 8 === 0 && dayCount < 5) {
             const cond = forecast.weather[0].main;
             const icon = weatherIcons[cond] || "☀️";
+            const dayData = {
+                date: new Date(forecast.dt * 1000).toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' }),
+                temp: forecast.main.temp.toFixed(1),
+                desc: forecast.weather[0].description,
+                humidity: forecast.main.humidity,
+                pressure: forecast.main.pressure,
+                wind: (forecast.wind.speed * 3.6).toFixed(1)
+            };
 
+            // create each card clickable
             forecastHtml += `
-                <div class="forecast-card">
-                    <p><b>${new Date(forecast.dt * 1000).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}</b></p>
+                <div class="forecast-card" onclick='viewDetails(${JSON.stringify(JSON.stringify(dayData))})'>
+                    <p><b>${dayData.date}</b></p>
                     <div style="font-size:30px">${icon}</div>
-                    <p>${forecast.main.temp.toFixed(1)}°C</p>
-                    <p>${forecast.weather[0].description}</p>
+                    <p>${dayData.temp}°C</p>
+                    <p>${dayData.desc}</p>
                 </div>
             `;
             dayCount++;
@@ -171,4 +156,62 @@ function displayForecastData(data) {
 
     forecastHtml += `</div>`;
     forecastInfoDiv.innerHTML = forecastHtml;
+}
+
+// when card clicked 
+function viewDetails(dayDataString) {
+    const dayData = JSON.parse(dayDataString);
+//THIS PART below creates DUMMY sunrise/sunset times 
+//It’s not using API data, just your computer’s current time + 6 hours
+    dayData.sunrise = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); 
+    dayData.sunset = new Date(Date.now() + 6 * 3600000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); 
+
+    localStorage.setItem("selectedDay", JSON.stringify(dayData));
+    window.location.href = "details.html";
+}
+if (document.getElementById("details")) {
+    const detailsContainer = document.getElementById("details");
+    const selectedDay = JSON.parse(localStorage.getItem("selectedDay"));
+
+    if (selectedDay) {
+        detailsContainer.innerHTML = `
+            <h1>Weather Details</h1>
+            <div class="details-grid">
+                <div class="detail-card">
+                    <i class="fas fa-temperature-high"></i>
+                    <h3>Temperature</h3>
+                    <p>${selectedDay.temp}°C</p>
+                </div>
+                <div class="detail-card">
+                    <i class="fas fa-tint"></i>
+                    <h3>Humidity</h3>
+                    <p>${selectedDay.humidity}%</p>
+                </div>
+                <div class="detail-card">
+                    <i class="fas fa-compress-arrows-alt"></i>
+                    <h3>Pressure</h3>
+                    <p>${selectedDay.pressure} hPa</p>
+                </div>
+                <div class="detail-card">
+                    <i class="fas fa-wind"></i>
+                    <h3>Wind</h3>
+                    <p>${selectedDay.wind} km/h</p>
+                </div>
+                <div class="detail-card">
+                    <i class="fas fa-cloud"></i>
+                    <h3>Description</h3>
+                    <p>${selectedDay.desc}</p>
+                </div>
+                <div class="detail-card">
+                    <i class="fas fa-sun"></i>
+                    <h3>Sunrise & Sunset</h3>
+                    <p>🌅 Sunrise: ${selectedDay.sunrise}</p>
+                    <p>🌇 Sunset: ${selectedDay.sunset}</p>
+                </div>
+            </div>
+            <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back</a>
+        `;
+    } else {
+        detailsContainer.textContent = "No details available.";
+    }
 }
